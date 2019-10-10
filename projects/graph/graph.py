@@ -1,58 +1,141 @@
 """
 Simple graph implementation
 """
-from util import Stack, Queue  # These may come in handy
+# from util import Stack, Queue  # These may come in handy
+
+class Queue():
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+
+class Stack():
+    def __init__(self):
+        self.stack = []
+    def push(self, value):
+        self.stack.append(value)
+    def pop(self):
+        if self.size() > 0:
+            return self.stack.pop()
+        else:
+            return None
+    def size(self):
+        return len(self.stack)
 
 class Graph:
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
     def __init__(self):
         self.vertices = {}
+
     def add_vertex(self, vertex):
         """
         Add a vertex to the graph.
         """
-        pass  # TODO
+        self.vertices[vertex] = set()
+
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
         """
-        pass  # TODO
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add(v2)
+
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        queue = Queue()
+        visited = set()
+        queue.enqueue(starting_vertex)
+        while queue.size() > 0:
+            vertex = queue.dequeue()
+            if vertex not in visited:
+                visited.add(vertex)
+                print(vertex)
+                for next_ in self.vertices[vertex]:
+                    queue.enqueue(next_)
+
     def dft(self, starting_vertex):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
-    def dft_recursive(self, starting_vertex):
+        stack = Stack()
+        visited = set()
+        stack.push(starting_vertex)
+        while stack.size() > 0:
+            vertex = stack.pop()
+            if vertex not in visited:
+                visited.add(vertex)
+                print(vertex)
+                for next_vert in self.vertices[vertex]:
+                    stack.push(next_vert)
+
+    def dft_recursive(self, starting_vertex, visited=None):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         This should be done using recursion.
         """
-        pass  # TODO
+        if visited is None:
+            visited = set()
+        visited.add(starting_vertex)
+        print(starting_vertex)
+        for next_ in self.vertices[starting_vertex]:
+            if next_ not in visited:
+                self.dft_recursive(next_, visited)
+        return visited
+
     def bfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing the shortest path from
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
+        queue = Queue()
+        visited = set()
+        queue.enqueue([starting_vertex])
+        while queue.size() > 0:
+            current_path = queue.dequeue()
+            vertex = current_path[len(current_path) - 1]
+            if vertex is destination_vertex:
+                return current_path
+            for next_vert in self.vertices[vertex]:
+                if next_vert not in visited:
+                    visited.add(next_vert)
+                    path = list(current_path)
+                    path.append(next_vert)
+                    queue.enqueue(path)
+
     def dfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        stack = Stack()
+        visited = set()
+        stack.push([starting_vertex])
+        while stack.size() > 0:
+            current_path = stack.pop()
+            vertex = current_path[len(current_path) - 1]
+            if vertex is destination_vertex:
+                return current_path
 
-
-
+            for next_ in self.vertices[vertex]:
+                if next_ not in visited:
+                    visited.add(next_)
+                    new_path = list(current_path)
+                    new_path.append(next_)
+                    stack.push(new_path)
 
 
 if __name__ == '__main__':
